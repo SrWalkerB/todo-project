@@ -9,14 +9,17 @@
     "db:studio": "drizzle-kit studio",
     "pretest": "docker-compose up -d db_test",
     "test": "vitest",
+    "posttest": "docker-compose stop db_test",
+    "pretest:ui": "docker-compose up -d db_test",
     "test:ui": "vitest --ui",
-    "posttest": "docker-compose stop db_test"
+    "posttest:ui": "docker-compose stop db_test"
   },
   "packageManager": "pnpm@10.14.0",
   "devDependencies": {
     "@types/node": "^24.10.0",
     "@types/pg": "^8.15.6",
     "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^4.0.7",
     "@vitest/ui": "4.0.7",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.6",

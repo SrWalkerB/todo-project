@@ -15,12 +15,8 @@ export const deleteTodos: FastifyPluginAsyncZod = async(app) => {
           id: z.uuidv7()
         }),
         response: {
-          404: z.object({
-            message: z.string()
-          }),
-          201: z.object({
-            message: z.string()
-          })
+          404: z.void(),
+          200: z.void()
         }
       },
     },
@@ -33,14 +29,10 @@ export const deleteTodos: FastifyPluginAsyncZod = async(app) => {
         })
 
       if(!response.length){
-        return reply.status(404).send({
-          message: "not found"
-        })
+        return reply.status(404).send()
       }
 
-      return reply.send({
-        message: response[0].id
-      })
+      return reply.send()
     }
   )
 }
