@@ -11,9 +11,13 @@ import ScalarApiReference from "@scalar/fastify-api-reference";
 import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
 import { isResponseSerializationError } from "fastify-type-provider-zod";
 import { env } from "./env";
-import { listTodos } from "./routes/list-todos";
-import { createTodos } from "./routes/create-todos";
-import { deleteTodos } from "./routes/delete-todos";
+import { listTasks } from "./routes/tasks/list-tasks";
+import { createTasks } from "./routes/tasks/create-tasks";
+import { deleteTasks } from "./routes/tasks/delete-tasks";
+import { listTaskCategory } from "./routes/task-category/list-task-category";
+import { createTaskCategory } from "./routes/task-category/create-task-category";
+import { deleteTaskCategory } from "./routes/task-category/delete-task-category";
+import { updateTasks } from "./routes/tasks/update-tasks";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -65,9 +69,13 @@ app.register(ScalarApiReference, {
   routePrefix: "/docs",
 });
 
-app.register(createTodos);
-app.register(listTodos);
-app.register(deleteTodos)
+app.register(listTasks);
+app.register(createTasks);
+app.register(updateTasks);
+app.register(deleteTasks);
+app.register(listTaskCategory);
+app.register(createTaskCategory)
+app.register(deleteTaskCategory)
 
 app.listen({ port: env.PORT, host: "0.0.0.0" }).then(() => {
   console.log(`HTTP server Running: http://localhost:3000`);

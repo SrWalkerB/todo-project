@@ -29,10 +29,13 @@ function RootComponent() {
           <SidebarProvider>
             <AppSidebar />
 
-            <div className='flex-1 p-2'>
+            <div className='flex-1 p-4'>
               <div className='flex justify-between align-middle'>
-                <Outlet />
-                <NavBar />
+                <div className='flex-1'>
+                  <Outlet />
+                </div>
+
+                <NavBar className='absolute right-1' />
               </div>
             </div>
           </SidebarProvider>

@@ -1,11 +1,19 @@
-import { CreateTaskDialog } from "./create-task-dialog";
+import { Plus } from "lucide-react";
+import { CreateEditTaskDialog } from "./dialogs/create-task-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
-export function NavBar(){
+export function NavBar({className}: {className?: string}){
   return (
-    <div className="flex gap-10">
-      <CreateTaskDialog />
+    <div className={
+      `flex gap-10 ${className ? className : "" }`
+    }>
+      <CreateEditTaskDialog typeDialog="create">
+        <Plus />
+        <span>
+          Add task
+        </span>
+      </CreateEditTaskDialog>
 
       <div>
         <DropdownMenu >

@@ -2,31 +2,31 @@ import { db } from "@/db"
 import app from "../src/server"
 import supertest from "supertest"
 import { expect, test, describe, beforeAll } from "vitest"
-import { todos } from "@/db/schema"
+import { tasks } from "@/db/schema"
 
 beforeAll(async() => {
-  await db.delete(todos)
+  await db.delete(tasks)
 })
 
 describe("Test TODO Routes", async () => {
   await app.ready();
 
-  test("test returns 200 /api/todos", async() => {
+  test("test returns 200 /api/tasks", async() => {
     const response = await app.inject({
       method: "GET",
-      url: "/api/todos"
+      url: "/api/tasks"
     })
 
     expect(response.statusCode).toBe(200)
     expect(JSON.parse(response.payload)).toStrictEqual({
-      todos: []
+      tasks: []
     })
   })
 
-  test("test return 201 with 1 data /api/todos", async () => {
+  test("test return 201 with 1 data /api/tasks", async () => {
     const response = await app.inject({
       method: "POST",
-      url: "/api/todo",
+      url: "/api/tasks",
       body: {
         "title": "task test 1"
       }
@@ -35,10 +35,10 @@ describe("Test TODO Routes", async () => {
     expect(response.statusCode).toBe(201)
   })
 
-  test("test return 400 with error validatiom /api/todos", async () => {
+  test("test return 400 with error validatiom /api/tasks", async () => {
     const response = await app.inject({
       method: "POST",
-      url: "/api/todo",
+      url: "/api/tasks",
       body: {}
     })
 
@@ -59,15 +59,15 @@ describe("Test TODO Routes", async () => {
           }
         ],
         "method": "POST",
-        "url": "/api/todo"
+        "url": "/api/tasks"
       }
     })
   })
 
-  test("test return 200 remove todo /api/todos", async () => {
+  test("test return 200 remove todo /api/tasks", async () => {
     const createTodo = await app.inject({
       method: "POST",
-      url: "/api/todo",
+      url: "/api/tasks",
       body: {
         title: "task delete"
       }
@@ -77,16 +77,16 @@ describe("Test TODO Routes", async () => {
 
     const deleteTodo = await app.inject({
       method: "DELETE",
-      url: `/api/todos/${payload.id}`
+      url: `/api/tasks/${payload.id}`
     });
 
     expect(deleteTodo.statusCode).toBe(200)
   })
 
-  test("test return 404 remove todo /api/todos", async () => {
+  test("test return 404 remove todo /api/tasks", async () => {
     const deleteTodo = await app.inject({
       method: "DELETE",
-      url: `/api/todos/019a4c98-ecc3-70ed-9012-db664a95341d`
+      url: `/api/tasks/019a4c98-ecc3-70ed-9012-db664a95341d`
     });
 
     console.log(deleteTodo.body)
