@@ -13,7 +13,7 @@ export default defineConfig({
     globals: true,
     env: process.env,
     setupFiles: ["./vitest.setup.ts"],
-    reporters: ["html"],
+    reporters: ["html", "default"],
     coverage: {
       enabled: true,
     }

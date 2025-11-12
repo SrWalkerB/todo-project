@@ -21,7 +21,11 @@ function Index() {
   const { data, isLoading } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const response = await api.get("/tasks");
+      const response = await api.get("/tasks", {
+        params: {
+          limit: 100
+        }
+      });
       const data = response.data;
       return tasksListSchema.parse(data);
     },
@@ -87,8 +91,9 @@ function Index() {
               <TableRow>
                 <TableHead>Status</TableHead>
                 <TableHead>Title</TableHead>
-                <TableHead>Description</TableHead>
+                {/*<TableHead>Description</TableHead>*/}
                 <TableHead>Category</TableHead>
+                <TableHead>Priority</TableHead>
                 <TableHead className='text-center'>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -107,16 +112,24 @@ function Index() {
                   >
                     {todo.title}
                   </TableCell>
-                  <TableCell
-                    className={todo.isCompleted ? 'line-through text-muted-foreground' : ''}
+                  {/*<TableCell
+                    className={
+                      todo.isCompleted ? 'line-through text-muted-foreground ' : ''
+                    }
                   >
                     {todo.description}
-                  </TableCell>
+                  </TableCell>*/}
 
                   <TableCell
                     className={todo.isCompleted ? 'line-through text-muted-foreground' : ''}
                   >
                     {todo.taskCategory ? todo.taskCategory.name : ""}
+                  </TableCell>
+
+                  <TableCell
+                    className={todo.isCompleted ? 'line-through text-muted-foreground' : ''}
+                  >
+                    {todo.taskPriority ? todo.taskPriority.name : ""}
                   </TableCell>
 
                   <TableCell className='flex gap-2 justify-center'>

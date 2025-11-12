@@ -8,6 +8,10 @@ export const tasksListItemSchema = z.object({
   taskCategory: z.object({
     id: z.uuidv7(),
     name: z.string().min(1),
+  }).nullable(),
+  taskPriority: z.object({
+    id: z.uuidv7(),
+    name: z.string().min(1),
   }).nullable()
 })
 

@@ -21,13 +21,15 @@ import { taskCategoryListSchema } from "@/http/schemas/task-category";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "../ui/field";
 import type { tasksListItemSchema } from "@/http/schemas/tasks";
+import { taskPriorityListSchema } from "@/http/schemas/task-priority";
 
 const taskSchema = z.object({
   title: z.string().min(1, {
     message: "Task name is required"
   }),
   description: z.string().optional(),
-  taskCategoryId: z.string().optional()
+  taskCategoryId: z.string().optional(),
+  taskPriorityId: z.string().optional()
 });
 
 interface CreateTaskDiaologProps extends ComponentProps<"button">{
@@ -50,7 +52,8 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
     defaultValues: typeDialog === "edit" && task ? {
       title: task.title,
       description: task.description || "",
-      taskCategoryId: task.taskCategory ? task.taskCategory.id : ""
+      taskCategoryId: task.taskCategory ? task.taskCategory.id : "",
+      taskPriorityId: task.taskPriority ? task.taskPriority.id : "",
     } : {
       title: "",
       description: "",
@@ -63,15 +66,28 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
     throw new Error("Task data is required for edit mode");
   }
 
-  const {data: taskCategories } = useQuery({
+  const { data: taskCategories } = useQuery({
     queryKey: ["tasksCategory"],
     queryFn: async () => {
       try {
         const response = await api.get("/task-category");
         return taskCategoryListSchema.parse(response.data);
-      } catch(error){
-        console.log("error",error)
+      } catch (error) {
+        console.log("error", error)
         toast.error("Failed to load task categories")
+      }
+    }
+  });
+
+  const {data: taskPriorities} = useQuery({
+    queryKey: ["taskPriority"],
+    queryFn: async () => {
+      try {
+        const response = await api.get("/task-priority");
+        return taskPriorityListSchema.parse(response.data);
+      } catch(error){
+        console.error(error);
+        toast.error("Failed to load task priorities")
       }
     }
   })
@@ -162,38 +178,73 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
                   )}
                 </Field>
 
-                <Field>
-                  <FieldLabel>Category</FieldLabel>
-                  <Controller
-                    name="taskCategoryId"
-                    control={control}
-                    render={({field}) => (
-                      <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category"/>
-                        </SelectTrigger>
+                <div className="grid grid-cols-2 gap-4">
+                  <Field>
+                    <FieldLabel>Category</FieldLabel>
+                    <Controller
+                      name="taskCategoryId"
+                      control={control}
+                      render={({field}) => (
+                        <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category"/>
+                          </SelectTrigger>
 
-                        <SelectContent>
-                          <SelectGroup>
-                            {
-                              taskCategories?.taskCategories.map((category) => (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.id}
-                                >
-                                  {category.name}
-                                </SelectItem>
-                              ))
-                            }
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </Field>
+                          <SelectContent>
+                            <SelectGroup>
+                              {
+                                taskCategories?.taskCategories.map((category) => (
+                                  <SelectItem
+                                    key={category.id}
+                                    value={category.id}
+                                  >
+                                    {category.name}
+                                  </SelectItem>
+                                ))
+                              }
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel>Priority</FieldLabel>
+                    <Controller
+                      name="taskPriorityId"
+                      control={control}
+                      render={({field}) => (
+                        <Select
+                            onValueChange={field.onChange}
+                            value={field.value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select priority"/>
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            <SelectGroup>
+                              {
+                                taskPriorities?.taskPriorities.map((priority) => (
+                                  <SelectItem
+                                    key={priority.id}
+                                    value={priority.id}
+                                  >
+                                    {priority.name}
+                                  </SelectItem>
+                                ))
+                              }
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </Field>
+                </div>
               </FieldGroup>
             </FieldSet>
 

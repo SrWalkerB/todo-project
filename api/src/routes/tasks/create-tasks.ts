@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { taskCategory, tasks } from "@/db/schema";
+import { taskCategory, taskPriority, tasks } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { createSelectSchema } from "drizzle-zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
@@ -17,7 +17,8 @@ export const createTasks: FastifyPluginAsyncZod = async (app) => {
           description: z.string().optional(),
           startDate: z.coerce.date().optional(),
           endDate: z.coerce.date().optional(),
-          taskCategoryId: z.uuidv7().optional()
+          taskCategoryId: z.uuidv7().optional(),
+          taskPriorityId: z.uuidv7().optional(),
         }),
         response: {
           201: createSelectSchema(tasks).pick({
@@ -38,10 +39,27 @@ export const createTasks: FastifyPluginAsyncZod = async (app) => {
           .from(taskCategory)
           .where(eq(taskCategory.id, request.body.taskCategoryId));
 
-        if(!taskCategoryExists){
+        if(!taskCategoryExists.length){
           return reply.status(404).send({
             message: "Task Category not found"
           })
+        }
+      }
+
+      if(request.body.taskPriorityId){
+        const taskPriorityExists = await db
+          .select({
+            id: taskPriority.id
+          })
+          .from(taskPriority)
+          .where(
+            eq(taskPriority.id, request.body.taskPriorityId)
+          );
+
+        if (!taskPriorityExists.length) {
+          return reply.status(404).send({
+            message: "Task Priority not found"
+          });
         }
       }
 

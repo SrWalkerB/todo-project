@@ -27,7 +27,7 @@ export const createTaskCategory: FastifyPluginAsyncZod = async (app) => {
         id: taskCategory.id
       })
 
-    return await reply.send({
+    return await reply.status(201).send({
       id: response[0].id
     })
   })

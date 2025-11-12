@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { taskCategory, tasks } from "@/db/schema";
+import { taskCategory, taskPriority, tasks } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { z } from "zod";
@@ -26,6 +26,10 @@ export const listTasks: FastifyPluginAsyncZod = async (app) => {
                   id: z.uuidv7(),
                   name: z.string().min(1),
                 }).nullable(),
+                taskPriority: z.object({
+                  id: z.uuidv7(),
+                  name: z.string().min(1)
+                }).nullable()
               })
             ),
           }),
@@ -36,38 +40,41 @@ export const listTasks: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      try {
-        const { limit } = request.query;
+      const { limit } = request.query;
 
-        const response = await db
-          .select({
-            id: tasks.id,
-            title: tasks.title,
-            description: tasks.description,
-            isCompleted: tasks.isCompleted,
-            taskCategory: {
-              id: taskCategory.id,
-              name: taskCategory.name,
-            }
-          })
-          .from(tasks)
-          .where(
-            eq(tasks.isActive, true)
-          )
-          .leftJoin(
-            taskCategory,
-            eq(tasks.taskCategoryId, taskCategory.id)
-          )
-          .orderBy(desc(tasks.completedAt))
-          .limit(limit)
+      const response = await db
+        .select({
+          id: tasks.id,
+          title: tasks.title,
+          description: tasks.description,
+          isCompleted: tasks.isCompleted,
+          taskCategory: {
+            id: taskCategory.id,
+            name: taskCategory.name,
+          },
+          taskPriority: {
+            id: taskPriority.id,
+            name: taskPriority.name
+          }
+        })
+        .from(tasks)
+        .where(
+          eq(tasks.isActive, true)
+        )
+        .leftJoin(
+          taskCategory,
+          eq(tasks.taskCategoryId, taskCategory.id)
+        )
+        .leftJoin(
+          taskPriority,
+          eq(tasks.taskPriorityId, taskPriority.id)
+        )
+        .orderBy(desc(tasks.completedAt))
+        .limit(limit)
 
-        return await reply.send({
-          tasks: response,
-        });
-      } catch (error) {
-        console.error("Error listing tasks:", error);
-        return reply.status(500).send({ message: "Internal Server Error" });
-      }
+      return await reply.send({
+        tasks: response,
+      });
     },
   );
 };

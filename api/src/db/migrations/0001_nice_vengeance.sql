@@ -1,0 +1,1 @@
+ALTER TABLE "tasks_priority" ADD COLUMN "order" integer DEFAULT 0;
