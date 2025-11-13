@@ -12,7 +12,8 @@
     "posttest": "docker-compose stop db_test",
     "pretest:ui": "docker-compose up -d db_test",
     "test:ui": "vitest --ui",
-    "posttest:ui": "docker-compose stop db_test"
+    "posttest:ui": "docker-compose stop db_test",
+    "build": "tsup src"
   },
   "packageManager": "pnpm@10.14.0",
   "devDependencies": {
@@ -24,6 +25,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.6",
     "supertest": "^7.1.4",
+    "tsup": "^8.5.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",

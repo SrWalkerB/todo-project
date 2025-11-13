@@ -22,6 +22,7 @@ export const listTasks: FastifyPluginAsyncZod = async (app) => {
                 title: z.string().min(1),
                 description: z.string().nullable(),
                 isCompleted: z.boolean(),
+                endDate: z.date().nullable(),
                 taskCategory: z.object({
                   id: z.uuidv7(),
                   name: z.string().min(1),
@@ -48,6 +49,7 @@ export const listTasks: FastifyPluginAsyncZod = async (app) => {
           title: tasks.title,
           description: tasks.description,
           isCompleted: tasks.isCompleted,
+          endDate: tasks.endDate,
           taskCategory: {
             id: taskCategory.id,
             name: taskCategory.name,
