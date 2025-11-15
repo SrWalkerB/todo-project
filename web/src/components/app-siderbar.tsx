@@ -1,4 +1,4 @@
-import { Calendar, Info } from "lucide-react";
+import { BookMarked, Calendar, Hourglass, Info } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
 import { Link } from "@tanstack/react-router";
 
@@ -8,11 +8,16 @@ const menuItems = [
     url: "/",
     icon: Calendar
   },
-  {
-    title: "About",
-    url: "/about",
-    icon: Info
-  }
+  // {
+  //   title: "Task Categories",
+  //   url: "/task-categories/",
+  //   icon: BookMarked
+  // },
+  // {
+  //   title: "Task Priorities",
+  //   url: "/task-priorities/",
+  //   icon: Hourglass
+  // }
 ]
 
 export function AppSidebar() {

@@ -12,7 +12,8 @@ export const tasksListItemSchema = z.object({
   taskPriority: z.object({
     id: z.uuidv7(),
     name: z.string().min(1),
-  }).nullable()
+  }).nullable(),
+  endDate: z.string().optional().nullable(),
 })
 
 export const tasksListSchema = z.object({

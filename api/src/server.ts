@@ -22,6 +22,8 @@ import { listTaskPriority } from "./routes/task-priority/list-task-priority";
 import { createTaskPriority } from "./routes/task-priority/create-task-priority";
 import { updateTaskPriority } from "./routes/task-priority/update-task-priority";
 import { deleteTaskPriority } from "./routes/task-priority/delete-task-priority";
+import { summaryTask } from "./routes/tasks/summary-task";
+import { generateAiDescription } from "./routes/tasks/generate-ai-description";
 
 const app = fastify().withTypeProvider<ZodTypeProvider>();
 
@@ -88,6 +90,8 @@ app.register(listTaskPriority)
 app.register(createTaskPriority);
 app.register(updateTaskPriority);
 app.register(deleteTaskPriority);
+app.register(summaryTask);
+app.register(generateAiDescription);
 
 if(env.NODE_ENV !== "test"){
   app.listen({ port: env.PORT, host: "0.0.0.0" }).then(() => {

@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './pages/__root'
 import { Route as AboutRouteImport } from './pages/about'
 import { Route as IndexRouteImport } from './pages/index'
+import { Route as TaskPrioritiesIndexRouteImport } from './pages/task-priorities/index'
+import { Route as TaskCategoriesIndexRouteImport } from './pages/task-categories/index'
+import { Route as DashboardIndexRouteImport } from './pages/dashboard/index'
 
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
@@ -22,31 +25,69 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaskPrioritiesIndexRoute = TaskPrioritiesIndexRouteImport.update({
+  id: '/task-priorities/',
+  path: '/task-priorities/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaskCategoriesIndexRoute = TaskCategoriesIndexRouteImport.update({
+  id: '/task-categories/',
+  path: '/task-categories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/task-categories': typeof TaskCategoriesIndexRoute
+  '/task-priorities': typeof TaskPrioritiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/task-categories': typeof TaskCategoriesIndexRoute
+  '/task-priorities': typeof TaskPrioritiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/task-categories/': typeof TaskCategoriesIndexRoute
+  '/task-priorities/': typeof TaskPrioritiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/dashboard'
+    | '/task-categories'
+    | '/task-priorities'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to: '/' | '/about' | '/dashboard' | '/task-categories' | '/task-priorities'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/dashboard/'
+    | '/task-categories/'
+    | '/task-priorities/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
+  TaskCategoriesIndexRoute: typeof TaskCategoriesIndexRoute
+  TaskPrioritiesIndexRoute: typeof TaskPrioritiesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +106,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/task-priorities/': {
+      id: '/task-priorities/'
+      path: '/task-priorities'
+      fullPath: '/task-priorities'
+      preLoaderRoute: typeof TaskPrioritiesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/task-categories/': {
+      id: '/task-categories/'
+      path: '/task-categories'
+      fullPath: '/task-categories'
+      preLoaderRoute: typeof TaskCategoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
+  TaskCategoriesIndexRoute: TaskCategoriesIndexRoute,
+  TaskPrioritiesIndexRoute: TaskPrioritiesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

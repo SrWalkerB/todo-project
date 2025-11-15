@@ -41,42 +41,46 @@ export const listTasks: FastifyPluginAsyncZod = async (app) => {
       },
     },
     async (request, reply) => {
-      const { limit } = request.query;
+      try {
+        const { limit } = request.query;
 
-      const response = await db
-        .select({
-          id: tasks.id,
-          title: tasks.title,
-          description: tasks.description,
-          isCompleted: tasks.isCompleted,
-          endDate: tasks.endDate,
-          taskCategory: {
-            id: taskCategory.id,
-            name: taskCategory.name,
-          },
-          taskPriority: {
-            id: taskPriority.id,
-            name: taskPriority.name
-          }
-        })
-        .from(tasks)
-        .where(
-          eq(tasks.isActive, true)
-        )
-        .leftJoin(
-          taskCategory,
-          eq(tasks.taskCategoryId, taskCategory.id)
-        )
-        .leftJoin(
-          taskPriority,
-          eq(tasks.taskPriorityId, taskPriority.id)
-        )
-        .orderBy(desc(tasks.completedAt))
-        .limit(limit)
+        const response = await db
+          .select({
+            id: tasks.id,
+            title: tasks.title,
+            description: tasks.description,
+            isCompleted: tasks.isCompleted,
+            endDate: tasks.endDate,
+            taskCategory: {
+              id: taskCategory.id,
+              name: taskCategory.name,
+            },
+            taskPriority: {
+              id: taskPriority.id,
+              name: taskPriority.name
+            }
+          })
+          .from(tasks)
+          .where(
+            eq(tasks.isActive, true)
+          )
+          .leftJoin(
+            taskCategory,
+            eq(tasks.taskCategoryId, taskCategory.id)
+          )
+          .leftJoin(
+            taskPriority,
+            eq(tasks.taskPriorityId, taskPriority.id)
+          )
+          .orderBy(desc(tasks.completedAt))
+          .limit(limit)
 
-      return await reply.send({
-        tasks: response,
-      });
+        return await reply.send({
+          tasks: response,
+        });
+      } catch(error){
+        console.error(error)
+      }
     },
   );
 };

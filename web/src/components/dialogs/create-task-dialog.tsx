@@ -22,6 +22,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from "../ui/field";
 import type { tasksListItemSchema } from "@/http/schemas/tasks";
 import { taskPriorityListSchema } from "@/http/schemas/task-priority";
+import { DatePicker } from "../date-picker";
+import { Sparkle, Sparkles } from "lucide-react";
+import { aiDescriptionSchema } from "@/http/schemas/ai";
+import { Textarea } from "../ui/textarea";
 
 const taskSchema = z.object({
   title: z.string().min(1, {
@@ -29,7 +33,8 @@ const taskSchema = z.object({
   }),
   description: z.string().optional(),
   taskCategoryId: z.string().optional(),
-  taskPriorityId: z.string().optional()
+  taskPriorityId: z.string().optional(),
+  endDate: z.string().optional()
 });
 
 interface CreateTaskDiaologProps extends ComponentProps<"button">{
@@ -46,14 +51,17 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
     handleSubmit,
     control,
     reset,
-    formState: { errors }
+    formState: { errors },
+    setValue,
+    getValues
   } = useForm<TaskSchema>({
     resolver: zodResolver(taskSchema),
     defaultValues: typeDialog === "edit" && task ? {
       title: task.title,
       description: task.description || "",
-      taskCategoryId: task.taskCategory ? task.taskCategory.id : "",
-      taskPriorityId: task.taskPriority ? task.taskPriority.id : "",
+      taskCategoryId: task.taskCategory ? task.taskCategory.id : undefined,
+      taskPriorityId: task.taskPriority ? task.taskPriority.id : undefined,
+      endDate: task.endDate || undefined,
     } : {
       title: "",
       description: "",
@@ -109,7 +117,14 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
     onSuccess: () => {
       queryClient.resetQueries({
         queryKey: ["tasks"]
-      })
+      });
+
+      if(typeDialog === "create"){
+        queryClient.resetQueries({
+          queryKey: ["task-summary"]
+        })
+      }
+
       setOpenDialog(false)
       toast.success(`Task ${typeDialog == "create" ? 'created' : 'updated'} successfully`)
     },
@@ -117,6 +132,25 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
       console.error(error)
       toast.error(`Failed to ${typeDialog == "create" ? 'create' : 'update'} task`)
     }
+  })
+
+  const aiDescriptionMutation = useMutation({
+    mutationFn: async (title: string) => {
+      const response = await api.get("/ai/description", {
+        params: {
+          title: title
+        }
+      });
+
+      return aiDescriptionSchema.parse(response.data);
+    },
+    onSuccess: (data) => {
+      setValue("description", data.aiDescription)
+      toast.success("AI Description generated successfully")
+    },
+    onError: () => {
+      toast.error("Failed to generate AI description")
+    },
   })
 
   async function handledFormSubmit(data: TaskSchema){
@@ -164,18 +198,48 @@ export function CreateEditTaskDialog({ typeDialog, task, ...props }: CreateTaskD
                 </Field>
 
                 <Field>
-                  <FieldLabel>
-                    Description
-                  </FieldLabel>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel>
+                      Description
+                    </FieldLabel>
 
-                  <Input
-                    placeholder="Need to buy coffee"
+                    <Button
+                      variant={"outline"}
+                      size={"icon-sm"}
+                      type="button"
+                      onClick={() => aiDescriptionMutation.mutate(getValues("title"))}
+                    >
+                      {
+                        aiDescriptionMutation.isPending ?
+                        <Sparkle className="animate-spin"/> :
+                        <Sparkle />
+                      }
+                    </Button>
+                  </div>
+
+                  <Textarea
+                    placeholder="Need to bug coffee"
                     {...register("description")}
                   />
 
                   {errors.description && (
                     <FieldError>{errors.description.message}</FieldError>
                   )}
+                </Field>
+
+                <Field>
+                  <Controller
+                    name="endDate"
+                    control={control}
+                    render={({ field }) =>  (
+                      (
+                        <DatePicker
+                          initialDate={field.value ? new Date(field.value) : undefined}
+                          onDateChange={(date) => field.onChange(date)}
+                        />
+                      )
+                    )}
+                  />
                 </Field>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -33,6 +33,10 @@ export function RemoveTaskDialog({id, title}: RemoveTaskDialogProps) {
         queryKey: ["tasks"]
       })
 
+      queryClient.resetQueries({
+        queryKey: ["task-summary"]
+      })
+
       mutation.reset();
       toast.success("Task removed successfully");
     }
